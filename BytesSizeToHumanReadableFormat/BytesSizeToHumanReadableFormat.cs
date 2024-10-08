@@ -1,6 +1,4 @@
-using System;
 using System.Globalization;
-using System.Linq;
 using BytesSizeToHumanReadableFormat.Core;
 
 /*
@@ -36,6 +34,7 @@ namespace BytesSizeToHumanReadableFormat
     */
 
     /// <summary>
+    /// Converts a byte size into a human-readable format string.
     /// Possible number of decimal places for a double.
     /// </summary>
     public enum RoundToDecimalPlaces
@@ -47,9 +46,9 @@ namespace BytesSizeToHumanReadableFormat
     /// <summary>
     /// Possible formats for the result.
     /// </summary>
-    public enum Formats
+    public enum SizeFormats
     {
-        B, KB, MB, GB, TB, PB, EB
+        Auto, B, KB, MB, GB, TB, PB, EB
     }
 
     public static class BytesSizeToHumanReadableFormat
@@ -61,88 +60,36 @@ namespace BytesSizeToHumanReadableFormat
         public const long PB = 1125899906842624;
         public const long EB = 1152921504606846976;
 
+        /// <summary>
+        /// Converts a byte size into a human-readable format string.
+        /// </summary>
+        /// <param name="bytes">The size in bytes to be converted.</param>
+        /// <param name="culture">The culture information to format the output string. Leave null to use InvariantCulture.</param>
+        /// <param name="roundToDecimalPlaces">The number of decimal places to round the result to. Default is 2. Range is 0-15. Trailing zeros are removed.</param>
+        /// <param name="sizeFormat">The size format to use (e.g., KB, MB, GB). Default is Auto, which calculates the best format.</param>
+        /// <param name="useThousandsSeparator">Indicates whether to use a thousands separator in the formatted string. Default is false.</param>
+        /// <returns>A string representing the byte size in a human-readable format.</returns>
         public static string BytesToHumanReadableFormat(this ulong bytes,
-           RoundToDecimalPlaces roundToDecimalPlaces = RoundToDecimalPlaces.Fifteen,
            CultureInfo culture = null,
-           Formats? forcedFormat = null)
+           RoundToDecimalPlaces roundToDecimalPlaces = RoundToDecimalPlaces.Two,
+           SizeFormats sizeFormat = SizeFormats.Auto,
+           bool useThousandsSeparator = false)
         {
+            if (culture is null) culture = CultureInfo.InvariantCulture;
+
             double d;
 
-            // If no format is forced, calculate the best format.
-            if (forcedFormat is null)
+            // If no size format is forced, calculate the best format.
+            if (sizeFormat == SizeFormats.Auto)
             {
                 d = Calculate.Auto(bytes);
             }
             else
             {
-                d = Calculate.Forced(bytes, (Formats)forcedFormat);
+                d = Calculate.Forced(bytes, sizeFormat);
             }
 
-            // Round to the specified number of decimal places.
-            int decimalPlaces = (int)roundToDecimalPlaces;
-            d = Math.Round(d, decimalPlaces);
-
-            // Format the string for the culture. Bytes will never have decimal places.
-            // REM: "#,#,0" is used for bytes to force a 0 to display if the result == 0, otherwise it would be blank.
-            // REM: The new string of # is for removing trailing zeros.
-            string result;
-            if (culture is null)
-            {
-                switch (bytes)
-                {
-                    case ulong n when n < KB:
-                        result = d == 1 ? "1 byte" : $"{d} bytes";
-                        break;
-                    case ulong n when n < MB:
-                        result = $"{d} KB";
-                        break;
-                    case ulong n when n < GB:
-                        result = $"{d} MB";
-                        break;
-                    case ulong n when n < TB:
-                        result = $"{d} GB";
-                        break;
-                    case ulong n when n < PB:
-                        result = $"{d} TB";
-                        break;
-                    case ulong n when n < EB:
-                        result = $"{d} PB";
-                        break;
-                    default:
-                        result = $"{d} EB";
-                        break;
-                }
-            }
-            else
-            {
-                switch (bytes)
-                {
-                    case ulong n when n < KB:
-                        result = $"{d.ToString("#,#,0", culture)} B";
-                        break;
-                    case ulong n when n < MB:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} KB";
-                        break;
-                    case ulong n when n < GB:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} MB";
-                        break;
-                    case ulong n when n < TB:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} GB";
-                        break;
-                    case ulong n when n < PB:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} TB";
-                        break;
-                    case ulong n when n < EB:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} PB";
-                        break;
-                    default:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} EB";
-                        break;
-                }
-
-            }
-
-            return result;
+            return Format.ByCulture(culture, bytes, d, roundToDecimalPlaces, useThousandsSeparator);
         }
     }
 }
