@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using BytesSizeToHumanReadableFormat.Core;
 
 /*
     MIT License
@@ -51,15 +52,14 @@ namespace BytesSizeToHumanReadableFormat
         B, KB, MB, GB, TB, PB, EB
     }
 
-
     public static class BytesSizeToHumanReadableFormat
     {
-        const long kb = 1024;
-        const long mb = 1048576;
-        const long gb = 1073741824;
-        const long tb = 1099511627776;
-        const long pb = 1125899906842624;
-        const long eb = 1152921504606846976;
+        public const long KB = 1024;
+        public const long MB = 1048576;
+        public const long GB = 1073741824;
+        public const long TB = 1099511627776;
+        public const long PB = 1125899906842624;
+        public const long EB = 1152921504606846976;
 
         public static string BytesToHumanReadableFormat(this ulong bytes,
            RoundToDecimalPlaces roundToDecimalPlaces = RoundToDecimalPlaces.One,
@@ -67,29 +67,15 @@ namespace BytesSizeToHumanReadableFormat
            Formats? forcedFormat = null)
         {
             double d;
-            switch (bytes)
+
+            // If no format is forced, calculate the best format.
+            if (forcedFormat is null)
             {
-                case ulong n when n < kb:
-                    d = bytes;
-                    break;
-                case ulong n when n < mb:
-                    d = (double)bytes / kb;
-                    break;
-                case ulong n when n < gb:
-                    d = (double)bytes / mb;
-                    break;
-                case ulong n when n < tb:
-                    d = (double)bytes / gb;
-                    break;
-                case ulong n when n < pb:
-                    d = (double)bytes / tb;
-                    break;
-                case ulong n when n < eb:
-                    d = (double)bytes / pb;
-                    break;
-                default:
-                    d = (double)bytes / eb;
-                    break;
+                d = Calculate.Auto(bytes);
+            }
+            else
+            {
+                d = Calculate.Forced(bytes, (Formats)forcedFormat);
             }
 
             // Round to the specified number of decimal places.
@@ -111,22 +97,22 @@ namespace BytesSizeToHumanReadableFormat
             {
                 switch (bytes)
                 {
-                    case ulong n when n < kb:
+                    case ulong n when n < KB:
                         result = d == 1 ? "1 byte" : $"{d} bytes";
                         break;
-                    case ulong n when n < mb:
+                    case ulong n when n < MB:
                         result = $"{d} KB";
                         break;
-                    case ulong n when n < gb:
+                    case ulong n when n < GB:
                         result = $"{d} MB";
                         break;
-                    case ulong n when n < tb:
+                    case ulong n when n < TB:
                         result = $"{d} GB";
                         break;
-                    case ulong n when n < pb:
+                    case ulong n when n < PB:
                         result = $"{d} TB";
                         break;
-                    case ulong n when n < eb:
+                    case ulong n when n < EB:
                         result = $"{d} PB";
                         break;
                     default:
@@ -138,22 +124,22 @@ namespace BytesSizeToHumanReadableFormat
             {
                 switch (bytes)
                 {
-                    case ulong n when n < kb:
+                    case ulong n when n < KB:
                         result = $"{d.ToString("#,#,0", cultureInfo)} B";
                         break;
-                    case ulong n when n < mb:
+                    case ulong n when n < MB:
                         result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} KB";
                         break;
-                    case ulong n when n < gb:
+                    case ulong n when n < GB:
                         result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} MB";
                         break;
-                    case ulong n when n < tb:
+                    case ulong n when n < TB:
                         result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} GB";
                         break;
-                    case ulong n when n < pb:
+                    case ulong n when n < PB:
                         result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} TB";
                         break;
-                    case ulong n when n < eb:
+                    case ulong n when n < EB:
                         result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} PB";
                         break;
                     default:
