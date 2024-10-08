@@ -62,8 +62,8 @@ namespace BytesSizeToHumanReadableFormat
         public const long EB = 1152921504606846976;
 
         public static string BytesToHumanReadableFormat(this ulong bytes,
-           RoundToDecimalPlaces roundToDecimalPlaces = RoundToDecimalPlaces.One,
-           string culture = null,
+           RoundToDecimalPlaces roundToDecimalPlaces = RoundToDecimalPlaces.Fifteen,
+           CultureInfo culture = null,
            Formats? forcedFormat = null)
         {
             double d;
@@ -81,13 +81,6 @@ namespace BytesSizeToHumanReadableFormat
             // Round to the specified number of decimal places.
             int decimalPlaces = (int)roundToDecimalPlaces;
             d = Math.Round(d, decimalPlaces);
-
-            // If culture is not passed or the passed one does not exist, use Invariant.
-            CultureInfo cultureInfo = culture is null || !cultureExists() ? CultureInfo.InvariantCulture : new CultureInfo(culture);
-            bool cultureExists()
-            {
-                return CultureInfo.GetCultures(CultureTypes.AllCultures).Any(x => x.Name.Equals(culture, StringComparison.OrdinalIgnoreCase));
-            };
 
             // Format the string for the culture. Bytes will never have decimal places.
             // REM: "#,#,0" is used for bytes to force a 0 to display if the result == 0, otherwise it would be blank.
@@ -125,25 +118,25 @@ namespace BytesSizeToHumanReadableFormat
                 switch (bytes)
                 {
                     case ulong n when n < KB:
-                        result = $"{d.ToString("#,#,0", cultureInfo)} B";
+                        result = $"{d.ToString("#,#,0", culture)} B";
                         break;
                     case ulong n when n < MB:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} KB";
+                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} KB";
                         break;
                     case ulong n when n < GB:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} MB";
+                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} MB";
                         break;
                     case ulong n when n < TB:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} GB";
+                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} GB";
                         break;
                     case ulong n when n < PB:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} TB";
+                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} TB";
                         break;
                     case ulong n when n < EB:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} PB";
+                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} PB";
                         break;
                     default:
-                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} EB";
+                        result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} EB";
                         break;
                 }
 
