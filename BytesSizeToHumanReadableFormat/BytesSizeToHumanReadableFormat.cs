@@ -27,6 +27,13 @@ using System.Linq;
 */
 namespace BytesSizeToHumanReadableFormat
 {
+    /*
+        In C#, a ulong is a 64-bit unsigned integer.
+        This gives it a range from 0 to 18,446,744,073,709,551,615. 
+        That number is eighteen quintillion, four hundred forty-six quadrillion, seven hundred forty-four trillion, seventy-three billion, seven hundred nine million in English.
+        18446744073709551615 / 1152921504606846976 = 16 EB.
+    */
+
     /// <summary>
     /// Possible number of decimal places for a double.
     /// </summary>
@@ -36,17 +43,15 @@ namespace BytesSizeToHumanReadableFormat
         Nine, Ten, Eleven, Twelve, Thirteen, Fourteen, Fifteen
     };
 
+    /// <summary>
+    /// Possible formats for the result.
+    /// </summary>
     public enum Formats
     {
-        Bytes, KB, MB, GB, TB, PB, EB
+        B, KB, MB, GB, TB, PB, EB
     }
 
-    /*
-    In C#, a long is a 64-bit signed integer.
-     This gives it a range from -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807. 
-     When it comes to data storage, this range translates to several exabytes, 
-     as 1 exabyte equals roughly 1 quintillion bytes. 8.192 exabytes.
-    */
+
     public static class BytesSizeToHumanReadableFormat
     {
         const long kb = 1024;
@@ -56,7 +61,7 @@ namespace BytesSizeToHumanReadableFormat
         const long pb = 1125899906842624;
         const long eb = 1152921504606846976;
 
-        public static string BytesToHumanReadableFormat(this long bytes,
+        public static string BytesToHumanReadableFormat(this ulong bytes,
            RoundToDecimalPlaces roundToDecimalPlaces = RoundToDecimalPlaces.One,
            string culture = null,
            Formats? forcedFormat = null)
@@ -64,22 +69,22 @@ namespace BytesSizeToHumanReadableFormat
             double d;
             switch (bytes)
             {
-                case long n when n < kb:
+                case ulong n when n < kb:
                     d = bytes;
                     break;
-                case long n when n < mb:
+                case ulong n when n < mb:
                     d = (double)bytes / kb;
                     break;
-                case long n when n < gb:
+                case ulong n when n < gb:
                     d = (double)bytes / mb;
                     break;
-                case long n when n < tb:
+                case ulong n when n < tb:
                     d = (double)bytes / gb;
                     break;
-                case long n when n < pb:
+                case ulong n when n < pb:
                     d = (double)bytes / tb;
                     break;
-                case long n when n < eb:
+                case ulong n when n < eb:
                     d = (double)bytes / pb;
                     break;
                 default:
@@ -106,22 +111,22 @@ namespace BytesSizeToHumanReadableFormat
             {
                 switch (bytes)
                 {
-                    case long n when n < kb:
+                    case ulong n when n < kb:
                         result = d == 1 ? "1 byte" : $"{d} bytes";
                         break;
-                    case long n when n < mb:
+                    case ulong n when n < mb:
                         result = $"{d} KB";
                         break;
-                    case long n when n < gb:
+                    case ulong n when n < gb:
                         result = $"{d} MB";
                         break;
-                    case long n when n < tb:
+                    case ulong n when n < tb:
                         result = $"{d} GB";
                         break;
-                    case long n when n < pb:
+                    case ulong n when n < pb:
                         result = $"{d} TB";
                         break;
-                    case long n when n < eb:
+                    case ulong n when n < eb:
                         result = $"{d} PB";
                         break;
                     default:
@@ -133,22 +138,22 @@ namespace BytesSizeToHumanReadableFormat
             {
                 switch (bytes)
                 {
-                    case long n when n < kb:
-                        result = d == 1 ? "1 byte" : $"{d.ToString("#,#,0", cultureInfo)} bytes";
+                    case ulong n when n < kb:
+                        result = $"{d.ToString("#,#,0", cultureInfo)} B";
                         break;
-                    case long n when n < mb:
+                    case ulong n when n < mb:
                         result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} KB";
                         break;
-                    case long n when n < gb:
+                    case ulong n when n < gb:
                         result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} MB";
                         break;
-                    case long n when n < tb:
+                    case ulong n when n < tb:
                         result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} GB";
                         break;
-                    case long n when n < pb:
+                    case ulong n when n < pb:
                         result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} TB";
                         break;
-                    case long n when n < eb:
+                    case ulong n when n < eb:
                         result = $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", cultureInfo)} PB";
                         break;
                     default:
