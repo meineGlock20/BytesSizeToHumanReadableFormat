@@ -43,34 +43,34 @@ namespace BytesSizeToHumanReadableFormat.Core
         /// </summary>
         /// <param name="bytes">The number of bytes to convert.</param>
         /// <param name="format">The format to convert the bytes to.</param>
-        public static double Forced(ulong bytes, Formats format)
+        public static double Forced(ulong bytes, SizeFormats sizeFormat)
         {
             double d;
-            switch (format)
+            switch (sizeFormat)
             {
-                case Formats.B:
+                case SizeFormats.B:
                     d = bytes;
                     break;
-                case Formats.KB:
+                case SizeFormats.KB:
                     d = (double)bytes / BytesSizeToHumanReadableFormat.KB;
                     break;
-                case Formats.MB:
+                case SizeFormats.MB:
                     d = (double)bytes / BytesSizeToHumanReadableFormat.MB;
                     break;
-                case Formats.GB:
+                case SizeFormats.GB:
                     d = (double)bytes / BytesSizeToHumanReadableFormat.GB;
                     break;
-                case Formats.TB:
+                case SizeFormats.TB:
                     d = (double)bytes / BytesSizeToHumanReadableFormat.TB;
                     break;
-                case Formats.PB:
+                case SizeFormats.PB:
                     d = (double)bytes / BytesSizeToHumanReadableFormat.PB;
                     break;
-                case Formats.EB:
+                case SizeFormats.EB:
                     d = (double)bytes / BytesSizeToHumanReadableFormat.EB;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(format), format, null);
+                    throw new ArgumentOutOfRangeException(nameof(sizeFormat), sizeFormat, "The specified format is not supported.");
             }
             return d;
         }
