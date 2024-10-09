@@ -5,7 +5,7 @@ using BytesSizeToHumanReadableFormat;
     Demonstrates how to use the BytesSizeToHumanReadableFormat library.
 
     The max value that can be returned is 16 exabytes.
-    ulong bytes = 18446744073709000000;
+    ulong bytes = 18446744073709551615;
 
     MIT License
 */
