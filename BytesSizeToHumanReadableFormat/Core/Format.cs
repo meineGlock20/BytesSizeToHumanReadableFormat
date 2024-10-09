@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 
 namespace BytesSizeToHumanReadableFormat.Core
@@ -13,6 +12,7 @@ namespace BytesSizeToHumanReadableFormat.Core
         /// <param name="d">The size in the appropriate unit (KB, MB, GB, etc.) to format.</param>
         /// <param name="roundToDecimalPlaces">The number of decimal places to round to.</param>
         /// <param name="useThousandsSeparator">Whether to use a thousands separator in the formatted string.</param>
+        /// <param name="sizeFormat">The size format to use (e.g., KB, MB, GB) or Auto.</param>
         /// <returns>A string representing the formatted byte size in a human-readable format.</returns>
         public static string ByCulture(CultureInfo culture,
             ulong bytes,
@@ -21,7 +21,7 @@ namespace BytesSizeToHumanReadableFormat.Core
             bool useThousandsSeparator,
             SizeFormats sizeFormat)
         {
-            // Format the string for the culture. Bytes will never have decimal places.
+            // Bytes will never have decimal places.
             // REM: "#,#,0" 0 is used for bytes to force a 0 to display if the result == 0, otherwise it would be blank.
             // REM: The new string of # is for removing trailing zeros.
 
@@ -29,40 +29,39 @@ namespace BytesSizeToHumanReadableFormat.Core
             string suffix = sizeFormat != SizeFormats.Auto ? sizeFormat.ToString() : string.Empty;
 
             int decimalPlaces = (int)roundToDecimalPlaces;
-            string result;
+            string format = useThousandsSeparator ? $"#,#,0.{new string('#', decimalPlaces)}" : $"0.{new string('#', decimalPlaces)}";
+            string numberFormat = d.ToString(format, culture);
+
+            // ✨ If the sizeFormat is not Auto, then the suffix string will be the enum value which we already have so return here.
+            if (sizeFormat != SizeFormats.Auto) return $"{numberFormat} {suffix}";
+
+            // If the sizeFormat is Auto, then the suffix string will be the best format.
             switch (bytes)
             {
                 case ulong n when n < BytesSizeToHumanReadableFormat.KB:
-                    suffix = sizeFormat == SizeFormats.Auto ? SizeFormats.B.ToString() : suffix;
-                    result = useThousandsSeparator ? $"{d.ToString("#,#,0", culture)} {suffix}" : $"{d.ToString("0", culture)} {suffix}";
+                    suffix = SizeFormats.B.ToString();
                     break;
                 case ulong n when n < BytesSizeToHumanReadableFormat.MB:
-                    suffix = sizeFormat == SizeFormats.Auto ? SizeFormats.KB.ToString() : suffix;
-                    result = useThousandsSeparator ? $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} {suffix}" : $"{d.ToString($"0.{new string('0', decimalPlaces)}", culture)} {suffix}";
+                    suffix = SizeFormats.KB.ToString();
                     break;
                 case ulong n when n < BytesSizeToHumanReadableFormat.GB:
-                    suffix = sizeFormat == SizeFormats.Auto ? SizeFormats.MB.ToString() : suffix;
-                    result = useThousandsSeparator ? $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} {suffix}" : $"{d.ToString($"0.{new string('0', decimalPlaces)}", culture)} {suffix}";
+                    suffix = SizeFormats.MB.ToString();
                     break;
                 case ulong n when n < BytesSizeToHumanReadableFormat.TB:
-                    suffix = sizeFormat == SizeFormats.Auto ? SizeFormats.GB.ToString() : suffix;
-                    result = useThousandsSeparator ? $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} {suffix}" : $"{d.ToString($"0.{new string('0', decimalPlaces)}", culture)} {suffix}";
+                    suffix = SizeFormats.GB.ToString();
                     break;
                 case ulong n when n < BytesSizeToHumanReadableFormat.PB:
-                    suffix = sizeFormat == SizeFormats.Auto ? SizeFormats.TB.ToString() : suffix;
-                    result = useThousandsSeparator ? $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} {suffix}" : $"{d.ToString($"0.{new string('0', decimalPlaces)}", culture)} {suffix}";
+                    suffix = SizeFormats.TB.ToString();
                     break;
                 case ulong n when n < BytesSizeToHumanReadableFormat.EB:
-                    suffix = sizeFormat == SizeFormats.Auto ? SizeFormats.PB.ToString() : suffix;
-                    result = useThousandsSeparator ? $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} {suffix}" : $"{d.ToString($"0.{new string('0', decimalPlaces)}", culture)} {suffix}";
+                    suffix = SizeFormats.PB.ToString();
                     break;
                 default:
-                    suffix = sizeFormat == SizeFormats.Auto ? SizeFormats.EB.ToString() : suffix;
-                    result = useThousandsSeparator ? $"{d.ToString($"#,#.{new string('#', decimalPlaces)}", culture)} {suffix}" : $"{d.ToString($"0.{new string('0', decimalPlaces)}", culture)} {suffix}";
+                    suffix = SizeFormats.EB.ToString();
                     break;
             }
 
-            return result;
+            return $"{numberFormat} {suffix}";
         }
     }
 }
