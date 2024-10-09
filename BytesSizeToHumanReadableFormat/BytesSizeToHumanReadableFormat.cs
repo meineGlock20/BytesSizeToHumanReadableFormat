@@ -77,17 +77,8 @@ namespace BytesSizeToHumanReadableFormat
         {
             if (culture is null) culture = CultureInfo.InvariantCulture;
 
-            double d;
-
-            // If no size format is forced, calculate the best format.
-            if (sizeFormat == SizeFormats.Auto)
-            {
-                d = Calculate.Auto(bytes);
-            }
-            else
-            {
-                d = Calculate.Forced(bytes, sizeFormat);
-            }
+            // If no size format is forced, auto calculate the best format.
+            double d = sizeFormat == SizeFormats.Auto ? Calculate.Auto(bytes) : Calculate.Forced(bytes, sizeFormat);
 
             return Format.ByCulture(culture, bytes, d, roundToDecimalPlaces, useThousandsSeparator);
         }
