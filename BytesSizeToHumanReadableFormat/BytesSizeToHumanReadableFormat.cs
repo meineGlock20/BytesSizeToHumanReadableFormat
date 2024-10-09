@@ -80,7 +80,7 @@ namespace BytesSizeToHumanReadableFormat
             // If no size format is forced, auto calculate the best format.
             double d = sizeFormat == SizeFormats.Auto ? Calculate.Auto(bytes) : Calculate.Forced(bytes, sizeFormat);
 
-            return Format.ByCulture(culture, bytes, d, roundToDecimalPlaces, useThousandsSeparator);
+            return Format.ByCulture(culture, bytes, d, roundToDecimalPlaces, useThousandsSeparator, sizeFormat);
         }
     }
 }
