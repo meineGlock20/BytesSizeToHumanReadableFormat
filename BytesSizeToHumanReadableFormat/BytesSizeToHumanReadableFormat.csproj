@@ -2,6 +2,48 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Title>Bytes Size to Human Readable Formatter for .NET</Title>
+    <PackageId>MeineGlock.BytesSizeToHumanReadableFormat</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>meineGlock20</Authors>
+    <Description>This is a .NET Standard class library that provides an extension for transforming a ulong of bytes into a human-readable format. It is primarily designed for measuring disk sizes. For example, passing 867630342949 will return the string "808.4 GB".
+
+Compatible with .NET Standard 2.0, making it usable across .NET Framework, .NET Core, and .NET 5 and later versions.
+
+Key features include:
+
+Localization support via the optional Culture parameter.
+Customizable decimal places (0 to 15).
+Ability to force formatting to a specific unit (e.g., MB, GB, PB).
+Optional thousands separator for readability.</Description>
+    <Copyright>© 2024 meineGlock20. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/meineGlock20/BytesSizeToHumanReadableFormat</PackageProjectUrl>
+    <PackageIcon>bytes-size.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/meineGlock20/BytesSizeToHumanReadableFormat</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>library;formatter;localization;csharp;bytes;disk-space;net;extension-method;storate-unit-converter;human-readable</PackageTags>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+
+  <ItemGroup>
+    <None Update="bytes-size.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
