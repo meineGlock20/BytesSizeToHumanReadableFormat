@@ -14,7 +14,7 @@ Key features include:
 
 You can install the lastest package via NuGet:
 
-`coming soon`
+`dotnet add package MeineGlock.BytesSizeToHumanReadableFormat --version 1.0.0`
 
 ## Usage
 
